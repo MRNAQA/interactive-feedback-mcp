@@ -50,11 +50,11 @@ def launch_feedback_ui(project_directory: str, summary: str) -> dict[str, str]:
 
         # Read the result from the temporary file
         with open(output_file, 'r') as f:
-            result = json.load(f)
+            result_data = json.load(f) # Renamed to avoid conflict
         os.unlink(output_file)
-        return result
+        return result_data # Use renamed variable
     except Exception as e:
-        if os.path.exists(output_file):
+        if 'output_file' in locals() and os.path.exists(output_file): # Check if output_file was defined
             os.unlink(output_file)
         raise e
 
@@ -69,5 +69,10 @@ def interactive_feedback(
     """Request interactive feedback for a given project directory and summary"""
     return launch_feedback_ui(first_line(project_directory), first_line(summary))
 
-if __name__ == "__main__":
+# New function for the entry point
+def main_stdio_server():
+    """Runs the MCP server in stdio mode."""
     mcp.run(transport="stdio")
+
+if __name__ == "__main__":
+    main_stdio_server() 
